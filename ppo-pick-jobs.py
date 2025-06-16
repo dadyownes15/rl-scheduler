@@ -131,9 +131,9 @@ def categorical_policy(x, a, mask, action_space, attn):
 Actor-Critics
 """
 def actor_critic(x, a, mask, action_space=None, attn=False):
-    with tf.variable_scope('pi'):
+    with tf.compat.v1.variable_scope('pi'):
         pi, logp, logp_pi , out= categorical_policy(x, a, mask, action_space, attn)
-    with tf.variable_scope('v'):
+    with tf.compat.v1.variable_scope('v'):
         v = tf.squeeze(critic_mlp(x, 1), axis=1)
     return pi, logp, logp_pi, v, out
 
