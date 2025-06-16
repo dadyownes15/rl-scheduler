@@ -1,5 +1,24 @@
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.disable_v2_behavior()
+
+def dense(x, units, activation=None, name=None):
+    layer = tf.keras.layers.Dense(units=units, activation=activation, name=name)
+    return layer(x)
+
+def conv2d(inputs, filters, kernel_size, strides=1, name=None):
+    layer = tf.keras.layers.Conv2D(filters=filters, kernel_size=kernel_size,
+                                   strides=strides, name=name)
+    return layer(inputs)
+
+def max_pooling2d(inputs, pool_size, strides, name=None):
+    layer = tf.keras.layers.MaxPooling2D(pool_size=pool_size, strides=strides,
+                                         name=name)
+    return layer(inputs)
+
+def flatten(inputs, name=None):
+    layer = tf.keras.layers.Flatten(name=name)
+    return layer(inputs)
 import gym
 import os
 import sys
@@ -22,7 +41,7 @@ def load_policy(model_path, itr='last'):
         itr = '%d' % itr
 
     # load the things!
-    sess = tf.Session()
+    sess = tf.compat.v1.Session()
     model = restore_tf_graph(sess, osp.join(model_path, 'simple_save' + itr))
 
     # get the correct op for executing actions
@@ -38,83 +57,83 @@ def load_policy(model_path, itr='last'):
 
 def critic_mlp(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
-    x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=16, activation=tf.nn.relu)
+    x = dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(dense(x, units=1), axis=-1)
+    x = dense(x, units=64, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=8, activation=tf.nn.relu)
 
-    return tf.layers.dense(x, units=act_dim)
+    return dense(x, units=act_dim)
 
 
 def mlp_v1(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = dense(x, units=128, activation=tf.nn.relu)
+    x = dense(x, units=128, activation=tf.nn.relu)
+    x = dense(x, units=128, activation=tf.nn.relu)
+    return dense(x, units=act_dim)
 
 
 def mlp_v2(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=16, activation=tf.nn.relu)
+    x = dense(x, units=8, activation=tf.nn.relu)
+    return dense(x, units=act_dim)
 
 
 def mlp_v3(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    return dense(x, units=act_dim)
 
 
 def rl_kernel(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
+    x = dense(x, units=32, activation=tf.nn.relu)
+    x = dense(x, units=16, activation=tf.nn.relu)
+    x = dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(dense(x, units=1), axis=-1)
     return x
 
 
 def attention(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    # x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    q = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    k = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    v = tf.layers.dense(x, units=32, activation=tf.nn.relu)
+    # x = dense(x, units=32, activation=tf.nn.relu)
+    q = dense(x, units=32, activation=tf.nn.relu)
+    k = dense(x, units=32, activation=tf.nn.relu)
+    v = dense(x, units=32, activation=tf.nn.relu)
     score = tf.matmul(q, tf.transpose(k, [0, 2, 1]))
     score = tf.nn.softmax(score, -1)
     attn = tf.reshape(score, (-1, MAX_QUEUE_SIZE, MAX_QUEUE_SIZE))
     x = tf.matmul(attn, v)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
+    x = dense(x, units=16, activation=tf.nn.relu)
 
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
-    # x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    # x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
-    # x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
+    x = dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(dense(x, units=1), axis=-1)
+    # x = dense(x, units=128, activation=tf.nn.relu)
+    # x = dense(x, units=64, activation=tf.nn.relu)
+    # x = dense(x, units=64, activation=tf.nn.relu)
     return x
 
 
 def lenet(x_ph, act_dim):
     m = int(np.sqrt(MAX_QUEUE_SIZE))
     x = tf.reshape(x_ph, shape=[-1, m, m, JOB_FEATURES])
-    x = tf.layers.conv2d(inputs=x, filters=32, kernel_size=[1, 1], strides=1)
-    x = tf.layers.max_pooling2d(x, [2, 2], 2)
-    x = tf.layers.conv2d(inputs=x, filters=64, kernel_size=[1, 1], strides=1)
-    x = tf.layers.max_pooling2d(x, [2, 2], 2)
-    x = tf.layers.flatten(x)
-    x = tf.layers.dense(x, units=64)
+    x = conv2d(inputs=x, filters=32, kernel_size=[1, 1], strides=1)
+    x = max_pooling2d(x, [2, 2], 2)
+    x = conv2d(inputs=x, filters=64, kernel_size=[1, 1], strides=1)
+    x = max_pooling2d(x, [2, 2], 2)
+    x = flatten(x)
+    x = dense(x, units=64)
 
-    return tf.layers.dense(
+    return dense(
         inputs=x,
         units=act_dim,
         activation=None
@@ -135,7 +154,7 @@ def categorical_policy(x, a, mask, action_space, attn):
     output_layer = output_layer + (mask - 1) * 1000000
     logp_all = tf.nn.log_softmax(output_layer)
 
-    pi = tf.squeeze(tf.multinomial(output_layer, 1), axis=1)
+    pi = tf.squeeze(tf.random.categorical(output_layer, 1), axis=1)
     logp = tf.reduce_sum(tf.one_hot(a, depth=act_dim) * logp_all, axis=1)
     logp_pi = tf.reduce_sum(tf.one_hot(pi, depth=act_dim) * logp_all, axis=1)
     return pi, logp, logp_pi, output_layer
@@ -147,9 +166,9 @@ Actor-Critics
 
 
 def actor_critic(x, a, mask, action_space=None, attn=False):
-    with tf.variable_scope('pi'):
+    with tf.compat.v1.variable_scope('pi'):
         pi, logp, logp_pi, out = categorical_policy(x, a, mask, action_space, attn)
-    with tf.variable_scope('v'):
+    with tf.compat.v1.variable_scope('v'):
         v = tf.squeeze(critic_mlp(x, 1), axis=1)
     return pi, logp, logp_pi, v, out
 
@@ -263,7 +282,7 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
     logger = EpochLogger(**logger_kwargs)
     logger.save_config(locals())
 
-    tf.set_random_seed(seed)
+    tf.compat.v1.set_random_seed(seed)
     np.random.seed(seed)
 
     env = HPCEnvFair(shuffle=shuffle, backfil=backfil, skip=skip, job_score_type=job_score_type, 
@@ -283,7 +302,7 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
     buf = PPOBuffer(obs_dim, act_dim, traj_per_epoch * JOB_SEQUENCE_SIZE, gamma, lam)
 
     if pre_trained:
-        sess = tf.Session()
+        sess = tf.compat.v1.Session()
         model = restore_tf_graph(sess, trained_model)
         logger.log('load pre-trained model')
         # Count variables
@@ -316,8 +335,8 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
         # [print(m.values()) for m in op]
         # train_pi = graph.get_tensor_by_name('pi/conv2d/kernel/Adam:0')
         # train_v = graph.get_tensor_by_name('v/conv2d/kernel/Adam:0')
-        train_pi = tf.get_collection("train_pi")[0]
-        train_v = tf.get_collection("train_v")[0]
+        train_pi = tf.compat.v1.get_collection("train_pi")[0]
+        train_v = tf.compat.v1.get_collection("train_v")[0]
         # train_pi_optimizer = MpiAdamOptimizer(learning_rate=pi_lr, name='AdamLoad')
         # train_pi = train_pi_optimizer.minimize(pi_loss)
         # train_v_optimizer = MpiAdamOptimizer(learning_rate=vf_lr, name='AdamLoad')
@@ -363,12 +382,12 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
         clipfrac = tf.reduce_mean(tf.cast(clipped, tf.float32))
 
         # Optimizers
-        train_pi = tf.train.AdamOptimizer(learning_rate=pi_lr).minimize(pi_loss)
-        train_v = tf.train.AdamOptimizer(learning_rate=vf_lr).minimize(v_loss)
-        sess = tf.Session()
-        sess.run(tf.global_variables_initializer())
-        tf.add_to_collection("train_pi", train_pi)
-        tf.add_to_collection("train_v", train_v)
+        train_pi = tf.compat.v1.train.AdamOptimizer(learning_rate=pi_lr).minimize(pi_loss)
+        train_v = tf.compat.v1.train.AdamOptimizer(learning_rate=vf_lr).minimize(v_loss)
+        sess = tf.compat.v1.Session()
+        sess.run(tf.compat.v1.global_variables_initializer())
+        tf.compat.v1.add_to_collection("train_pi", train_pi)
+        tf.compat.v1.add_to_collection("train_v", train_v)
 
     # Setup model saving
     # logger.setup_tf_saver(sess, inputs={'x': x_ph}, outputs={'action_probs': action_probs, 'log_picked_action_prob': log_picked_action_prob, 'v': v})

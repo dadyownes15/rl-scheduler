@@ -3,6 +3,7 @@ import joblib
 import os
 import os.path as osp
 import tensorflow as tf
+tf.compat.v1.disable_v2_behavior()
 from spinup import EpochLogger
 from spinup.utils.logx import restore_tf_graph
 from tensorflow.python.util import deprecation
@@ -15,7 +16,7 @@ logging.getLogger('tensorflow').disabled = True
 
 from HPCSimPickJobs import *
 
-tf.enable_eager_execution()
+tf.compat.v1.enable_eager_execution()
 
 
 def load_policy(model_path, itr='last'):
