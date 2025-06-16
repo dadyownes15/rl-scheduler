@@ -2,7 +2,8 @@ import time
 import joblib
 import os
 import os.path as osp
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from spinup import EpochLogger
 from spinup.utils.logx import restore_tf_graph
 from tensorflow.python.util import deprecation
