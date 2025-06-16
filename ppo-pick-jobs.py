@@ -243,7 +243,7 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
     logger = EpochLogger(**logger_kwargs)
     logger.save_config(locals())
 
-    tf.set_random_seed(seed)
+    tf.compat.v1.set_random_seed(seed)
     np.random.seed(seed)
 
     env = HPCEnv(shuffle=shuffle, backfil=backfil, skip=skip, job_score_type=score_type, batch_job_slice=batch_job_slice, build_sjf=False)
@@ -342,8 +342,8 @@ def ppo(workload_file, model_path, ac_kwargs=dict(), seed=0,
         clipfrac = tf.reduce_mean(tf.cast(clipped, tf.float32))
 
         # Optimizers
-        train_pi = tf.train.AdamOptimizer(learning_rate=pi_lr).minimize(pi_loss)
-        train_v = tf.train.AdamOptimizer(learning_rate=vf_lr).minimize(v_loss)
+        train_pi = tf.compat.v1.train.AdamOptimizer(learning_rate=pi_lr).minimize(pi_loss)
+        train_v = tf.compat.v1.train.AdamOptimizer(learning_rate=vf_lr).minimize(v_loss)
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
         tf.add_to_collection("train_pi", train_pi)

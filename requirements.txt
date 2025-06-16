@@ -17,9 +17,7 @@ keras-Preprocessing>=1.1.2
 kiwisolver>=1.4.5
 Markdown>=3.5.2
 matplotlib>=3.8.4
-mpi4py>=3.1.5
 numpy>=1.26.4
-opencv-python>=4.9.0.80
 packaging>=23.2
 pandas>=2.2.2
 pexpect>=4.9.0
@@ -34,12 +32,10 @@ pytz>=2024.1
 scipy>=1.11.4
 seaborn>=0.13.2
 six>=1.16.0
-spinup==0.1
 tensorboard>=2.19.0
 tensorflow==2.19.0
 tensorflow-estimator==2.15.0
 termcolor>=2.4.0
-torch>=2.2.2
 tqdm>=4.66.2
 traitlets>=5.14.2
 wcwidth>=0.2.12
