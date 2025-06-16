@@ -184,11 +184,11 @@ class PPOBuffer:
         assert self.ptr < self.max_size     # buffer has to have room so you can store
         self.obs_buf[self.ptr] = obs
        # self.cobs_buf[self.ptr] = cobs
-        self.act_buf[self.ptr] = act
+        self.act_buf[self.ptr] = np.asarray(act).item()
         self.mask_buf[self.ptr] = mask
         self.rew_buf[self.ptr] = rew
-        self.val_buf[self.ptr] = val
-        self.logp_buf[self.ptr] = logp
+        self.val_buf[self.ptr] = np.asarray(val).item()
+        self.logp_buf[self.ptr] = np.asarray(logp).item()
         self.ptr += 1
 
     def finish_path(self, last_val=0):

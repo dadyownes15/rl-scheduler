@@ -18,6 +18,8 @@ except Exception:  # pragma: no cover - optional dependency
     class _DummyMPI:
         COMM_WORLD = _DummyComm()
         SUM = None
+        MIN = None
+        MAX = None
 
     MPI = _DummyMPI()
 import os, subprocess, sys
