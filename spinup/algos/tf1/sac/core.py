@@ -11,8 +11,8 @@ def placeholders(*args):
 
 def mlp(x, hidden_sizes=(32,), activation=tf.tanh, output_activation=None):
     for h in hidden_sizes[:-1]:
-        x = tf.layers.dense(x, units=h, activation=activation)
-    return tf.layers.dense(x, units=hidden_sizes[-1], activation=output_activation)
+        x = tf.compat.v1.layers.dense(x, units=h, activation=activation)
+    return tf.compat.v1.layers.dense(x, units=hidden_sizes[-1], activation=output_activation)
 
 def get_vars(scope):
     return [x for x in tf.global_variables() if scope in x.name]
@@ -36,8 +36,8 @@ LOG_STD_MIN = -20
 def mlp_gaussian_policy(x, a, hidden_sizes, activation, output_activation):
     act_dim = a.shape.as_list()[-1]
     net = mlp(x, list(hidden_sizes), activation, activation)
-    mu = tf.layers.dense(net, act_dim, activation=output_activation)
-    log_std = tf.layers.dense(net, act_dim, activation=None)
+    mu = tf.compat.v1.layers.dense(net, act_dim, activation=output_activation)
+    log_std = tf.compat.v1.layers.dense(net, act_dim, activation=None)
     log_std = tf.clip_by_value(log_std, LOG_STD_MIN, LOG_STD_MAX)
 
     std = tf.exp(log_std)

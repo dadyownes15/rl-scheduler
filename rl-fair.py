@@ -39,83 +39,83 @@ def load_policy(model_path, itr='last'):
 
 def critic_mlp(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
-    x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=16, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(tf.compat.v1.layers.dense(x, units=1), axis=-1)
+    x = tf.compat.v1.layers.dense(x, units=64, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=8, activation=tf.nn.relu)
 
-    return tf.layers.dense(x, units=act_dim)
+    return tf.compat.v1.layers.dense(x, units=act_dim)
 
 
 def mlp_v1(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = tf.compat.v1.layers.dense(x, units=128, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=128, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=128, activation=tf.nn.relu)
+    return tf.compat.v1.layers.dense(x, units=act_dim)
 
 
 def mlp_v2(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=16, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=8, activation=tf.nn.relu)
+    return tf.compat.v1.layers.dense(x, units=act_dim)
 
 
 def mlp_v3(x, act_dim):
     x = tf.reshape(x, shape=[-1, JOB_SEQUENCE_SIZE * JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    return tf.layers.dense(x, units=act_dim)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    return tf.compat.v1.layers.dense(x, units=act_dim)
 
 
 def rl_kernel(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
+    x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=16, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(tf.compat.v1.layers.dense(x, units=1), axis=-1)
     return x
 
 
 def attention(x, act_dim):
     x = tf.reshape(x, shape=[-1, MAX_QUEUE_SIZE, JOB_FEATURES])
-    # x = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    q = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    k = tf.layers.dense(x, units=32, activation=tf.nn.relu)
-    v = tf.layers.dense(x, units=32, activation=tf.nn.relu)
+    # x = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    q = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    k = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
+    v = tf.compat.v1.layers.dense(x, units=32, activation=tf.nn.relu)
     score = tf.matmul(q, tf.transpose(k, [0, 2, 1]))
     score = tf.nn.softmax(score, -1)
     attn = tf.reshape(score, (-1, MAX_QUEUE_SIZE, MAX_QUEUE_SIZE))
     x = tf.matmul(attn, v)
-    x = tf.layers.dense(x, units=16, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=16, activation=tf.nn.relu)
 
-    x = tf.layers.dense(x, units=8, activation=tf.nn.relu)
-    x = tf.squeeze(tf.layers.dense(x, units=1), axis=-1)
-    # x = tf.layers.dense(x, units=128, activation=tf.nn.relu)
-    # x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
-    # x = tf.layers.dense(x, units=64, activation=tf.nn.relu)
+    x = tf.compat.v1.layers.dense(x, units=8, activation=tf.nn.relu)
+    x = tf.squeeze(tf.compat.v1.layers.dense(x, units=1), axis=-1)
+    # x = tf.compat.v1.layers.dense(x, units=128, activation=tf.nn.relu)
+    # x = tf.compat.v1.layers.dense(x, units=64, activation=tf.nn.relu)
+    # x = tf.compat.v1.layers.dense(x, units=64, activation=tf.nn.relu)
     return x
 
 
 def lenet(x_ph, act_dim):
     m = int(np.sqrt(MAX_QUEUE_SIZE))
     x = tf.reshape(x_ph, shape=[-1, m, m, JOB_FEATURES])
-    x = tf.layers.conv2d(inputs=x, filters=32, kernel_size=[1, 1], strides=1)
-    x = tf.layers.max_pooling2d(x, [2, 2], 2)
-    x = tf.layers.conv2d(inputs=x, filters=64, kernel_size=[1, 1], strides=1)
-    x = tf.layers.max_pooling2d(x, [2, 2], 2)
-    x = tf.layers.flatten(x)
-    x = tf.layers.dense(x, units=64)
+    x = tf.compat.v1.layers.conv2d(inputs=x, filters=32, kernel_size=[1, 1], strides=1)
+    x = tf.compat.v1.layers.max_pooling2d(x, [2, 2], 2)
+    x = tf.compat.v1.layers.conv2d(inputs=x, filters=64, kernel_size=[1, 1], strides=1)
+    x = tf.compat.v1.layers.max_pooling2d(x, [2, 2], 2)
+    x = tf.compat.v1.layers.flatten(x)
+    x = tf.compat.v1.layers.dense(x, units=64)
 
-    return tf.layers.dense(
+    return tf.compat.v1.layers.dense(
         inputs=x,
         units=act_dim,
         activation=None
@@ -136,7 +136,7 @@ def categorical_policy(x, a, mask, action_space, attn):
     output_layer = output_layer + (mask - 1) * 1000000
     logp_all = tf.nn.log_softmax(output_layer)
 
-    pi = tf.squeeze(tf.multinomial(output_layer, 1), axis=1)
+    pi = tf.squeeze(tf.random.categorical(output_layer, 1), axis=1)
     logp = tf.reduce_sum(tf.one_hot(a, depth=act_dim) * logp_all, axis=1)
     logp_pi = tf.reduce_sum(tf.one_hot(pi, depth=act_dim) * logp_all, axis=1)
     return pi, logp, logp_pi, output_layer
