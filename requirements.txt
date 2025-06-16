@@ -35,9 +35,9 @@ scipy>=1.11.4
 seaborn>=0.13.2
 six>=1.16.0
 spinup==0.1
-tensorboard>=2.19.1
-tensorflow>=2.19.0
-tensorflow-estimator>=2.15.0
+tensorboard>=2.19.0
+tensorflow==2.19.0
+tensorflow-estimator==2.15.0
 termcolor>=2.4.0
 torch>=2.2.2
 tqdm>=4.66.2
