@@ -50,7 +50,7 @@ def combined_shape(length, shape=None):
 
 
 def placeholder(dim=None):
-    return tf.placeholder(dtype=tf.float32, shape=combined_shape(None, dim))
+    return tf.compat.v1.placeholder(dtype=tf.float32, shape=combined_shape(None, dim))
 
 
 def placeholders(*args):
@@ -61,7 +61,7 @@ def placeholder_from_space(space):
     if isinstance(space, Box):
         return placeholder(space.shape)
     elif isinstance(space, Discrete):
-        return tf.placeholder(dtype=tf.int32, shape=(None,))
+        return tf.compat.v1.placeholder(dtype=tf.int32, shape=(None,))
     raise NotImplementedError
 
 
@@ -70,7 +70,7 @@ def placeholders_from_spaces(*args):
 
 
 def get_vars(scope=''):
-    return [x for x in tf.trainable_variables() if scope in x.name]
+    return [x for x in tf.compat.v1.trainable_variables() if scope in x.name]
 
 
 def count_vars(scope=''):
