@@ -10,8 +10,8 @@ import random
 from random import shuffle
 
 import numpy as np
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+import tensorflow as tf
+tf.compat.v1.disable_v2_behavior()
 import scipy.signal
 
 import gym
