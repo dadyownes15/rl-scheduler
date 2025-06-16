@@ -174,3 +174,4 @@ python make_table_script.py --score_type "utilization"
 
 We put the code associated with fairness in these files: `HPCEnvFair.py, rl-fair.py, compare-fair.py` which are the
 counterparts of `HPCSimPickJobs.py, ppo-pick-jobs.py, compare-pick-jobs.py`. You can train, monitor and test similarly.
+# rl-scheduler
