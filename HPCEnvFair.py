@@ -2,6 +2,7 @@ from job import Job, Workloads
 from cluster import Cluster
 
 import os
+from pathlib import Path
 import math
 import json
 import time
@@ -12,6 +13,7 @@ from statistics import mean
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.disable_v2_behavior()
 import scipy.signal
 
 import gym
@@ -49,7 +51,7 @@ def combined_shape(length, shape=None):
 
 
 def placeholder(dim=None):
-    return tf.placeholder(dtype=tf.float32, shape=combined_shape(None, dim))
+    return tf.compat.v1.placeholder(dtype=tf.float32, shape=combined_shape(None, dim))
 
 
 def placeholders(*args):
@@ -60,7 +62,7 @@ def placeholder_from_space(space):
     if isinstance(space, Box):
         return placeholder(space.shape)
     elif isinstance(space, Discrete):
-        return tf.placeholder(dtype=tf.int32, shape=(None,))
+        return tf.compat.v1.placeholder(dtype=tf.int32, shape=(None,))
     raise NotImplementedError
 
 
@@ -69,7 +71,7 @@ def placeholders_from_spaces(*args):
 
 
 def get_vars(scope=''):
-    return [x for x in tf.trainable_variables() if scope in x.name]
+    return [x for x in tf.compat.v1.trainable_variables() if scope in x.name]
 
 
 def count_vars(scope=''):
@@ -190,7 +192,7 @@ class HPCEnvFair(gym.Env):
                 self.next_arriving_job_idx = self.start + 1
 
                 if self.enable_preworkloads:
-                    self.gen_preworkloads(job_sequence_size + self.np_random.randint(job_sequence_size))
+                    self.gen_preworkloads(job_sequence_size + self.np_random.integers(job_sequence_size))
 
                 sequence_score = self.score_acorss_users(self.per_user_scores(self.schedule_curr_sequence_reset(self.sjf_score)).values())
                 self.sjf_scores.append(sequence_score)
@@ -267,7 +269,7 @@ class HPCEnvFair(gym.Env):
 
     def gen_preworkloads(self, size):
         # Generate some running jobs to randomly fill the cluster.
-        # size = self.np_random.randint(2 * job_sequence_size)
+        # size = self.np_random.integers(2 * job_sequence_size)
         running_job_size = size
         for i in range(running_job_size):
             _job = self.loads[self.start - i - 1]
@@ -323,18 +325,18 @@ class HPCEnvFair(gym.Env):
             while not done:
                 # randomly sample a sequence of jobs from workload (self.start_idx_last_reset + 1) % (self.loads.size() - 2 * job_sequence_size
                 if self.batch_job_slice == 0:
-                    self.start = self.np_random.randint(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
+                    self.start = self.np_random.integers(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
                 else:
-                    self.start = self.np_random.randint(job_sequence_size,
+                    self.start = self.np_random.integers(job_sequence_size,
                                                         (self.batch_job_slice - job_sequence_size - 1))
 
                 if self.sjf_scores[self.start] > 10 and self.sjf_scores[self.start] < 150:
                     done = True
         else:
             if self.batch_job_slice == 0:
-                self.start = self.np_random.randint(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
+                self.start = self.np_random.integers(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
             else:
-                self.start = self.np_random.randint(job_sequence_size, (self.batch_job_slice - job_sequence_size - 1))
+                self.start = self.np_random.integers(job_sequence_size, (self.batch_job_slice - job_sequence_size - 1))
 
         self.start_idx_last_reset = self.start
         self.num_job_in_batch = job_sequence_size
@@ -344,7 +346,7 @@ class HPCEnvFair(gym.Env):
         self.next_arriving_job_idx = self.start + 1
 
         if self.enable_preworkloads:
-            self.gen_preworkloads(job_sequence_size + self.np_random.randint(job_sequence_size))
+            self.gen_preworkloads(job_sequence_size + self.np_random.integers(job_sequence_size))
 
 
         self.scheduled_scores.append(self.score_acorss_users(self.per_user_scores(self.schedule_curr_sequence_reset(self.sjf_score)).values()))
@@ -379,9 +381,9 @@ class HPCEnvFair(gym.Env):
         job_sequence_size = num
         assert self.batch_job_slice == 0 or self.batch_job_slice >= job_sequence_size
         if self.batch_job_slice == 0:
-            self.start = self.np_random.randint(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
+            self.start = self.np_random.integers(job_sequence_size, (self.loads.size() - job_sequence_size - 1))
         else:
-            self.start = self.np_random.randint(job_sequence_size, (self.batch_job_slice - job_sequence_size - 1))
+            self.start = self.np_random.integers(job_sequence_size, (self.batch_job_slice - job_sequence_size - 1))
         # self.start = start
         self.start_idx_last_reset = self.start
         self.num_job_in_batch = job_sequence_size
@@ -984,8 +986,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--workload', type=str, default='./data/lublin_256.swf')  # RICC-2010-2
     args = parser.parse_args()
-    current_dir = os.getcwd()
-    workload_file = os.path.join(current_dir, args.workload)
+    current_dir = Path().resolve()
+    workload_file = str(current_dir / args.workload)
 
     env = HPCEnvFair(batch_job_slice=100, build_sjf=True)
     env.seed(0)

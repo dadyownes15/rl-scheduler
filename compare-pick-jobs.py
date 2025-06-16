@@ -2,7 +2,9 @@ import time
 import joblib
 import os
 import os.path as osp
+from pathlib import Path
 import tensorflow as tf
+tf.compat.v1.disable_v2_behavior()
 from spinup import EpochLogger
 from spinup.utils.logx import restore_tf_graph
 
@@ -20,7 +22,7 @@ from HPCSimPickJobs import *
 
 import matplotlib.pyplot as plt
 plt.rcdefaults()
-tf.enable_eager_execution()
+tf.compat.v1.enable_eager_execution()
 
 def load_policy(model_path, itr='last'):
     # handle which epoch to load from
@@ -214,9 +216,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    current_dir = os.getcwd()
-    workload_file = os.path.join(current_dir, args.workload)
-    model_file = os.path.join(current_dir, args.rlmodel)
+    current_dir = Path().resolve()
+    workload_file = str(current_dir / args.workload)
+    model_file = str(current_dir / args.rlmodel)
 
     get_probs, get_value = load_policy(model_file, 'last') 
     
